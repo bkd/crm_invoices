@@ -1,0 +1,19 @@
+%li[invoice]{ highlightable(dom_id(invoice, :tools)) }
+  - if invoice.status
+    .strip{:class => invoice.status}= Setting.invoice_status[invoice.status.intern]
+  - else
+    .strip{:style => "color:white;"} Other
+  .tools{ invisible, :id => dom_id(invoice, :tools) }
+    %small
+      = link_to_edit(invoice) + " | "
+      = link_to_delete(invoice) + "&nbsp;"
+  = link_to(invoice.full_name(@current_user.preference[:invoices_naming]), invoice)
+  %tt
+    == Added by: #{link_to invoice.user.name, user_path(invoice.user)} #{time_ago_in_words(invoice.created_at)} ago 
+    - if invoice.status == "sent"
+      == Due: #{time_ago_in_words(invoice.due_date)} ago 
+    - if invoice.account && invoice.account.name?
+      == for Account: #{link_to invoice.account.name, account_path(invoice.account)}
+  - unless @current_user.preference[:invoices_outline] == "brief"
+    %dt{ :style => "padding: 2px 0px 0px 0px" }
+      = "description: <b>" + invoice.description << "</b> | " if invoice.description?

@@ -1,0 +1,99 @@
+.show
+  = styles_for :invoice, :task
+  #confirm{ hidden }
+  .title_tools#menu
+    = link_to_inline(:edit_invoice, edit_invoice_path(@invoice), :text => "Edit") + " | "
+    = link_to_function("Delete?", confirm_delete(@invoice))
+  .title
+    #edit_invoice_title= "Invoice:: #{@invoice.title}"
+  %div#edit_invoice{ hidden }
+  %table{ :width => "100%", :cellpadding => 2, :cellspacing => 0 } 
+    %tr
+      %td.label.header
+        Unique ID:
+      %td.header
+        =@invoice.uniqueid
+      %td.header
+      %td.header{:align=>"right"}
+        =link_to "&#9658; Print a PDF", invoice_path(@invoice, :format => 'pdf'),:popup => ['new_window', 'height=300,width=600'] 
+    %tr
+      %td.label
+        Account:
+      %td
+        =@invoice.account.name if @invoice.account && @invoice.account.name? 
+      %td.label
+        User:
+      %td
+        =@invoice.user.name        
+    %tr
+      %td.label
+        Due date:
+      %td
+        =@invoice.due_date      
+      %td.label
+        Sent date:
+      %td
+        =@invoice.sent_date
+    %tr
+      %td.label
+        Created at:
+      %td
+        =@invoice.created_at
+      %td.label
+        Updated at
+      %td
+        =@invoice.updated_at
+    %tr
+      %td.label
+        Amount:
+      %td
+        =@invoice.get_currency_symbol(@invoice.currency)
+        =@invoice.amount
+      %td.label
+        Additions:
+      %td
+        =@invoice.get_currency_symbol(@invoice.currency)
+        =@invoice.additions || 0
+    %tr
+      %td.label
+        Total:
+      %td
+        =@invoice.get_currency_symbol(@invoice.currency)
+        =@invoice.total 
+      %td.label
+        VAT
+      %td
+        ="#{@invoice.vat}%"
+    %tr
+      %td.label
+        Status:
+      %td
+        =@invoice.status.titleize
+      %td.label
+        Access:
+      %td
+        =@invoice.access
+    %tr
+      %td.label{:height=>"50",:valign=>"top"}
+        Decription:
+      %td{:height=>"50",:valign=>"top"}
+        =@invoice.description
+      %td.label{:height=>"50",:valign=>"top"}
+        Invoice address:
+      %td{:height=>"50",:valign=>"top"}
+        =@invoice.invoice_address
+  
+  
+  -#-----------------------------------------------------------------------------
+  %br
+  = render :partial => "common/new_comment", :locals => { :commentable => @invoice } 
+  = render :partial => "common/comment", :collection => @invoice.comments
+  
+  -#-----------------------------------------------------------------------------
+  %br
+  = inline :create_task, new_task_path, { :class => "subtitle_tools", :related => dom_id(@invoice) }
+  .subtitle#create_task_title Tasks
+  .remote#create_task{ hidden }
+  .log#tasks
+    = render :partial => "common/tasks"
+  = hook(:show_invoice_bottom, self)

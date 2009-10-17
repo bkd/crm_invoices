@@ -1,0 +1,10 @@
+page.call "crm.flick", :empty, :toggle
+page.call "crm.hide_form", :create_invoice
+page.call "crm.flip_form", :laterun
+
+if params[:cancel] != "true"
+  page[:laterun].replace_html :partial => "laterun"
+  page.call "crm.set_title", :create_invoice, "Invoices Options"
+else
+  page.call "crm.set_title", :create_invoice, "Invoices"
+end

@@ -1,0 +1,8 @@
+= render :partial => 'invoices/invoice_styles'
+
+%br
+= inline :create_invoice, new_invoice_path, { :class => "subtitle_tools", :related => dom_id(@account) }
+.subtitle#create_invoice_title invoices
+.remote#create_invoice{ hidden }
+.list#invoices
+  = render :partial => "invoices/invoice", :collection => @account.invoices.my(@current_user)

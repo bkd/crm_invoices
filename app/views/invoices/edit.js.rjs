@@ -1,0 +1,35 @@
+id = dom_id(@invoice)
+
+if params[:cancel] == "true" # <----------------- Hide [Edit Invoice]
+  if called_from_landing_page?
+    page.call "crm.flip_form", :edit_invoice
+    page.call "crm.set_title", :edit_invoice, @invoice.title
+  else                                            # Called from invoices list item...
+    page[id].replace :partial => "invoice", :collection => [ @invoice ]
+  end
+else # <----------------------------------------- Show [Edit Invoice] form.
+
+  if params[:cancel].blank?                       # Called from invoices list item...
+    if @previous                                  # Hide open [Edit Invoice] form if any.
+      if @previous.is_a?(Invoice)
+        page[dom_id(@previous)].replace :partial => "invoice", :collection => [ @previous ]
+      else
+        page.call "crm.flick", "invoice_#{@previous}", :remove
+      end
+    end
+    page.call "crm.highlight_off", id             # Disable onMouseOver for the list item.
+    page.call "crm.hide_form", :create_invoice    # Hide [Create Invoice] form if any.
+    page[id].replace_html :partial => "edit"      # Show [Edit Invoice] form.
+
+  elsif params[:cancel] == "false"                # Called from title of the invoice landing page...
+    page[:edit_invoice].replace_html :partial => "edit"
+    page.call "crm.flip_form", :edit_invoice
+    page.call "crm.set_title", :edit_invoice, "Edit #{@invoice.title}"
+  end
+
+  page.call "crm.create_or_select_account", request.referer =~ /\/accounts\// || @account.id.blank?
+  page.call "crm.date_select_popup", "invoice_due_date"
+  page.call "crm.date_select_popup", "invoice_sent_date"
+  page[:invoice_title].focus
+
+end

@@ -1,0 +1,17 @@
+= styles_for :invoice
+.title_tools
+  = link_to_inline(:laterun, laterun_invoices_path) << " | "
+  = link_to_inline(:create_invoice, new_invoice_path) << " | "
+  = link_to_inline(:options, options_invoices_path)
+.title
+  %span#create_invoice_title Invoices
+  = image_tag("loading.gif", :size => "16x16", :id => "loading", :style => "display: none;")
+.remote#options{ hidden }
+.remote#create_invoice{ hidden }
+.remote#laterun{ hidden }
+.list#invoices
+  - unless @invoices.empty?
+    = render :partial => "invoice", :collection => @invoices
+  - else
+    = render :partial => "common/empty"
+#paginate= render :partial => "common/paginate"

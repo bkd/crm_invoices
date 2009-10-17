@@ -1,0 +1,61 @@
+.section
+  %table{ :width => 520, :cellpadding => 0, :cellspacing => 0 }
+    %tr
+      %td{ :valign => :top }
+        .label.top.req Title:
+        = f.text_field :title, :style => "width:324px"
+      %td= spacer
+      %td{ :valign => :top }
+        .label Status:
+        = f.select :status, Setting.invert(:invoice_status), { :selected => @invoice.status.blank? ? :open : @invoice.status.to_sym}, { :style => "width:160px" }
+      %td= spacer
+      %td{ :valign => :top }
+        .label Unique Invoice ID:
+        = f.text_field :uniqueid, {:style => "width:160px", :disabled =>"disabled" }
+    - fields_for(@account) do |a|
+      = a.hidden_field :user_id
+      = a.hidden_field :assigned_to
+      %tr
+        %td{ :valign => :top }
+          .label 
+            Account
+            %span#account_selector>
+          = collection_select :account, :id, @accounts, :id, :name, { :selected => @account.id || 0 }, { :style => "width:330px; display:none;", :id=>"account_id" }
+          = a.text_field :name, {:style => "width:324px; display:none;", :id=>"account_name"}
+        %td= spacer
+        %td{ :valign => :top }
+          .label Assigned to:
+          = collection_select :invoice, :assigned_to, @users, :id, :title, { :include_blank => "Myself" }, { :style => "width:160px" }
+      %tr
+        %td{ :valign => :top }
+          .label Amount:
+          = f.text_field :amount, :style => "width:60px"
+        %td= spacer
+        %td{ :valign => :top }
+          .label Vat:
+          = f.select :vat, Setting.invoice_vat, { :selected => @invoice.vat.blank? ? :standard : @invoice.vat}, { :style => "width:100px" }
+        %td= spacer
+        %td{ :valign => :top }
+          .label Currency:
+          = f.select :currency, Setting.invoice_currencies, { :selected=>(@invoice.currency.blank? ? :sterling : @invoice.currency)}, { :style => "width:100px" }
+      %tr
+        %td{ :valign => :top }
+          .label Additions:
+          = f.text_field :additions, :style => "width:60px"
+        %td= spacer
+        %td{ :valign => :top }
+          .label Invoice Total:
+          = f.text_field :total, { :style => "width:60px", :disabled => "disabled" }
+      %tr
+        %td{ :valign => :top }
+          .label Due date:
+          = f.text_field :due_date, :value => f.object.due_date ? f.object.due_date.to_s(:mmddyyyy) : "", :style => "width:110px;", :autocomplete => :off
+          .small
+            MM/DD/YYYY
+        %td= spacer
+        %td{ :valign => :top }
+          .label Sent date:
+          = f.text_field :sent_date, :value => f.object.sent_date ? f.object.sent_date.to_s(:mmddyyyy) : "", :style => "width:110px;", :autocomplete => :off
+          .small
+            MM/DD/YYYY
+    

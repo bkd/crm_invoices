@@ -1,0 +1,9 @@
+- late_by_menu_items = ["None","1 week", "2 weeks", "1 month", "2 months", "3 months", "4 months", "5 months", "6 months"].inject([]) do | items, late_by|
+  - items << %Q[{ name: "#{late_by}", on_select: function() { #{redraw(:late_by, late_by)} } }]
+:plain
+  new crm.Menu({
+    trigger   : "late_by",
+    fade      : 0.1,
+    appear    : 0.1,
+    menu_items: [ #{late_by_menu_items.join(",")} ]
+  });

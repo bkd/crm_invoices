@@ -1,0 +1,24 @@
+id = called_from_landing_page? ? "edit_invoice" : dom_id(@invoice)
+
+if @invoice.errors.empty?
+  if called_from_landing_page?
+    page.call "crm.flip_form", :edit_invoice
+    page.call "crm.set_title", :edit_invoice, @invoice.title
+    page << refresh_sidebar(:show, :summary)
+  else
+    page[id].replace :partial => "invoice", :collection => [ @invoice ]
+    page[id].visual_effect :highlight, :duration => 1.0
+    if called_from_index_page?
+      page << refresh_sidebar(:index)
+    else
+      page[:recently].replace :partial => "common/recently"
+    end
+  end
+else  
+  page[id].replace_html :partial => "edit"
+  page.call "crm.create_or_select_account", request.referer =~ /\/accounts\// || @account.id.blank?
+  page.call "crm.date_select_popup", "invoice_due_date"
+  page.call "crm.date_select_popup", "invoice_sent_date"
+  page[id].visual_effect :shake, :duration => 0.25, :distance => 6
+  page[:invoice_title].focus
+end

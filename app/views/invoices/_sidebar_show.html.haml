@@ -1,0 +1,10 @@
+.panel#summary
+  %h4= @invoice.title
+  - if !@invoice.title.blank? && @invoice.account
+    %div== #{@invoice.title} at #{link_to(@invoice.account.name, account_path(@invoice.account))}
+  - elsif !@invoice.title.blank?
+    %div= @invoice.title
+  - elsif @invoice.account
+    %div= link_to(@invoice.account.name, account_path(@invoice.account))
+  - unless @invoice.description.blank?
+    = @invoice.description

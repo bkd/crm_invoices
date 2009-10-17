@@ -1,0 +1,14 @@
+.title
+  %span
+    Create Invoice
+- remote_form_for(@invoice) do |f|
+  = link_to_close new_invoice_path
+  = f.hidden_field :user_id
+  = f.error_messages
+  = render :partial => "invoices/top_section", :locals => { :f => f }
+  = render :partial => "invoices/extra",       :locals => { :f => f }
+  = render :partial => "invoices/permissions", :locals => { :f => f }
+  .buttonbar
+    = f.submit "Create invoice", :onclick => %/$("account_assigned_to").value = $F("invoice_assigned_to"); if ($("account_id").visible()) { $("account_id").enable(); }/
+    or
+    = link_to_cancel new_invoice_path

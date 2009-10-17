@@ -1,0 +1,9 @@
+%p
+  = link_to_close laterun_invoices_path
+  = hidden_field_tag "invoice[user_id]", @current_user.id
+  == List invoices overdue by more than #{link_to(@late_by || "1 month", "#", :id => :late_by)}
+  
+%p
+%script
+  = render :partial => "late_by"
+  

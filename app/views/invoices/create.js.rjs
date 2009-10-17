@@ -1,0 +1,20 @@
+if @invoice.valid?
+  page[:create_invoice_arrow].replace_html "&#9658;"
+  page.visual_effect :toggle_blind, :create_invoice, :duration => 0.3, :afterFinish => 'function(effect) {effect.element.update("")}'
+  page.insert_html :top, :invoices, :partial => "invoice", :collection => [ @invoice ]
+  page[dom_id(@invoice)].visual_effect :highlight, :duration => 1.5
+  if called_from_index_page?
+    page << refresh_sidebar(:index)
+    page[:paginate].replace_html render(:partial => "common/paginate")
+  else
+    page[:recently].replace :partial => "common/recently"
+  end
+  page.call "crm.flick", :empty, :remove
+else
+  page[:create_invoice].replace_html :partial => "create"
+  page.call "crm.create_or_select_account", request.referer =~ /\/accounts\// || @account.id.blank?
+  page.call "crm.date_select_popup", "invoice_due_date"
+  page.call "crm.date_select_popup", "invoice_sent_date"
+  page[:create_invoice].visual_effect :shake, :duration => 0.25, :distance => 6
+  page[:invoice_title].focus
+end
